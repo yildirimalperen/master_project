@@ -7,9 +7,10 @@ def get_data():
     sql_query = """
         SELECT data
         FROM finance_records_new
-        WHERE source = 'Alpha Vantage' AND id = 10;
+        WHERE source = 'Alpha Vantage' AND id IN (10,14,17,34,35);
     """
     df_json = pd.read_sql_query(sql_query, engine)
+    print("Data retrieved successfully!...")
     return df_json
 
 def convert_to_dataframe(df_json):
@@ -30,13 +31,20 @@ def convert_to_dataframe(df_json):
                     })
                     records.append(record)
     df_final = pd.DataFrame(records)
+    print("converted to dataframe successfully!...")
     return df_final
+
+def write_to_db(df_final):
+    # Veritabanına yazma işlemi
+    engine = create_engine('postgresql+psycopg2://postgres:your_password@127.0.0.1:5433/postgres')
+    df_final.to_sql('processed_data', engine, if_exists='append', index=False)
 
 
 def main():
     df_json = get_data()
     df_final = convert_to_dataframe(df_json)
-    print(df_final.sample(20))
+    write_to_db(df_final)
+    print("Data processing completed successfully!...")
 
 if __name__ == '__main__':
     main()
