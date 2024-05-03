@@ -7,7 +7,7 @@ def get_data():
     sql_query = """
         SELECT data
         FROM finance_records_new
-        WHERE source = 'Alpha Vantage' AND id IN (10,14,17,34,35);
+        WHERE source = 'Alpha Vantage' AND id IN (37);
     """
     df_json = pd.read_sql_query(sql_query, engine)
     print("Data retrieved successfully!...")
