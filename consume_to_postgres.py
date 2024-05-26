@@ -1,25 +1,14 @@
 import pika
 import psycopg2
 import json
-
 def get_db_connection():
-    return psycopg2.connect(
-        dbname='postgres', 
-        user='postgres', 
-        password='', 
-        host='127.0.0.1', 
-        port='5433'
-    )
+    return psycopg2.connect( dbname='postgres', user='postgres', password='', host='127.0.0.1', port='5433')
 
 def setup_database():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS finance_records_new (
-            id SERIAL PRIMARY KEY,
-            source TEXT NOT NULL,
-            data JSONB NOT NULL
-        );
+        CREATE TABLE IF NOT EXISTS finance_records_new ( id SERIAL PRIMARY KEY, source TEXT NOT NULL, data JSONB NOT NULL );
     """)
     conn.commit()
     conn.close()
@@ -32,8 +21,6 @@ def callback(ch, method, properties, body):
     source = 'Alpha Vantage'  # Source can be dynamically set based on the queue or data type
 
     print(f"Received data from {source}: {data}")
-    
-    # Insert data into the PostgreSQL database
     cursor.execute(
         "INSERT INTO finance_records_new (source, data) VALUES (%s, %s)",
         (source, json.dumps(data))  # Convert the JSON back to a string to store in JSONB column

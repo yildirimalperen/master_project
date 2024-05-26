@@ -15,15 +15,13 @@ def fetch_data(symbols):
             "interval": "5min",
             "apikey": API_KEY
         }
-        
         response = requests.get(API_URL, params=params)
         if response.status_code == 200:
             json_response = response.json()
             data[symbol] = json_response.get('Time Series (5min)', {})
             print(f"Data fetched for {symbol}: {list(data[symbol].items())[0]}")  # Print the most recent data
         else:
-            print(f"Failed to fetch data for {symbol}. HTTP Status Code: {response.status_code}")
-    
+            print(f"Failed to fetch data for {symbol}. HTTP Status Code: {response.status_code}")   
     return data
 
 def send_to_rabbitmq(data):
